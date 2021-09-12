@@ -2,17 +2,22 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
+const helmet = require("helmet")
+require("dotenv").config();
+
 
 const usersRoute = require('./routes/users');
 const saucesRoute = require('./routes/sauces');
 
-mongoose.connect('mongodb+srv://jathoni:azertyuiop2021@piiquantedb.vwbgx.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_LINK}`,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
-  .catch(() => console.log('Connexion à MongoDB échouée !'));
+  .catch(() => console.log('Connexion à MongoDB échouée !'))
 
 const app = express();
+
+app.use(helmet());
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -21,7 +26,7 @@ app.use((req, res, next) => {
     next();
   });
 
-app.use(bodyParser.json());
+app.use(express.json())
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
